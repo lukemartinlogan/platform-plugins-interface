@@ -6,6 +6,7 @@ class GitOps(Enum):
     CLONE='clone'
     UPDATE='update'
 
+
 class GitNode(ExecNode):
     def __init__(self, url, path, method, branch=None, commit=None, **kwargs):
         self.url = url
@@ -19,9 +20,9 @@ class GitNode(ExecNode):
             cmds.append(f"git clone {self.url} {self.path}")
         cmds.append(f"cd {self.path}")
         if self.branch is not None:
-            cmds.append(f"git switch {self.branch}")
+            cmds.append(f"git checkout {self.branch}")
         if self.commit is not None:
-            cmds.append(f"git switch {self.commit}")
+            cmds.append(f"git checkout {self.commit}")
         if self.method == GitOps.UPDATE:
             cmds.append(f"git pull")
 
