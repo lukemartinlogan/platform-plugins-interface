@@ -86,7 +86,7 @@ class OrangefsFuse(Service):
         :return: None
         """
         rg = self.jarvis.resource_graph
-        self.md_hosts = self.jarvis.hostfile
+        self.md_hosts = self.hostfile
         if self.config['md_hosts'] is None:
             count = int(len(self.md_hosts) / 4)
             if count < 1:
@@ -94,8 +94,8 @@ class OrangefsFuse(Service):
             self.md_hosts = self.md_hosts.subset(count)
         else:
             self.md_hosts = self.md_hosts.subset('md_hosts')
-        self.client_hosts = self.jarvis.hostfile
-        self.server_hosts = self.jarvis.hostfile
+        self.client_hosts = self.hostfile
+        self.server_hosts = self.hostfile
 
         # Locate storage hardware
         dev_df = []

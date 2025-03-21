@@ -141,7 +141,7 @@ class Ior(Application):
              LocalExecInfo(env=self.mod_env))
         Exec(' '.join(cmd),
              MpiExecInfo(env=self.mod_env,
-                         hostfile=self.jarvis.hostfile,
+                         hostfile=self.hostfile,
                          nprocs=self.config['nprocs'],
                          ppn=self.config['ppn'],
                          do_dbg=self.config['do_dbg'],
@@ -165,7 +165,7 @@ class Ior(Application):
         """
         Rm(self.config['out'] + '*',
            PsshExecInfo(env=self.env,
-                        hostfile=self.jarvis.hostfile))
+                        hostfile=self.hostfile))
 
     def _get_stat(self, stat_dict):
         """

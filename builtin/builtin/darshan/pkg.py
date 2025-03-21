@@ -54,7 +54,7 @@ class Darshan(Interceptor):
         if self.config['DARSHAN_LIB'] is None:
             raise Exception('Could not find darshan')
         Mkdir(self.env['DARSHAN_LOG_DIR'],
-              PsshExecInfo(hostfile=self.jarvis.hostfile))
+              PsshExecInfo(hostfile=self.hostfile))
         print(f'Found libdarshan.so at {self.config["DARSHAN_LIB"]}')
 
     def modify_env(self):

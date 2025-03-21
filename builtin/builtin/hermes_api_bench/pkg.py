@@ -123,7 +123,7 @@ class HermesApiBench(Application):
         cmd = ' '.join(cmd)
         Exec(cmd, MpiExecInfo(nprocs=self.config['nprocs'],
                               env=self.env,
-                              hosts=self.jarvis.hostfile,
+                              hosts=self.hostfile,
                               ppn=self.config['ppn'],
                               do_dbg=self.config['do_dbg'],
                               dbg_port=self.config['dbg_port']))

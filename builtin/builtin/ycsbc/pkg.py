@@ -86,7 +86,7 @@ class Ycsbc(Application):
         print(cmd)
         self.exec = Exec(cmd,
              LocalExecInfo(env=self.mod_env,
-                           hostfile=self.jarvis.hostfile,
+                           hostfile=self.hostfile,
                            do_dbg=self.config['do_dbg'],
                            dbg_port=self.config['dbg_port'],
                            collect_output=True))

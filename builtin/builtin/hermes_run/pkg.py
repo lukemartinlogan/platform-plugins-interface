@@ -29,14 +29,6 @@ class HermesRun(Service):
         """
         return [
             {
-                'name': 'num_nodes',
-                'msg': 'Number of nodes to run hermes on. 0 means all',
-                'type': int,
-                'default': 0,
-                'class': 'communication',
-                'rank': 1,
-            },
-            {
                 'name': 'data_shm',
                 'msg': 'Data buffering space',
                 'type': str,
@@ -274,11 +266,6 @@ class HermesRun(Service):
             }
         ]
 
-    def get_hostfile(self):
-        self.hostfile = self.jarvis.hostfile
-        if self.config['num_nodes'] > 0 and self.hostfile.path is not None:
-            self.hostfile = Hostfile(hostfile=self.hostfile_path)
-
     def _configure(self, **kwargs):
         """
         Converts the Jarvis configuration to application-specific configuration.
@@ -291,10 +278,6 @@ class HermesRun(Service):
         rg = self.jarvis.resource_graph
 
         # Create hostfile
-        self.hostfile = self.jarvis.hostfile
-        if self.config['num_nodes'] > 0 and self.hostfile.path is not None:
-            self.hostfile = self.hostfile.subset(self.config['num_nodes'])
-            self.hostfile.save(self.hostfile_path)
         self.env['HERMES_LOG_VERBOSITY'] = str(self.config['log_verbosity'])
         # Begin making hermes_run config
         hermes_server = {

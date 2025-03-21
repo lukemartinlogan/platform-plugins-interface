@@ -122,7 +122,7 @@ class GrayScott(Application):
             adios_dir = os.path.join(self.shared_dir, 'gray-scott-output')
             self.config['output'] = os.path.join(adios_dir,
                                                  'data')
-            Mkdir(adios_dir, PsshExecInfo(hostfile=self.jarvis.hostfile,
+            Mkdir(adios_dir, PsshExecInfo(hostfile=self.hostfile,
                                           env=self.env))
         settings_json = {
             'L': self.config['L'],
@@ -138,7 +138,7 @@ class GrayScott(Application):
             'adios_config': self.adios2_xml_path
         }
         Mkdir(self.config['output'],
-              PsshExecInfo(hostfile=self.jarvis.hostfile,
+              PsshExecInfo(hostfile=self.hostfile,
                            env=self.env))
         JsonFile(self.settings_json_path).save(settings_json)
 
@@ -163,7 +163,7 @@ class GrayScott(Application):
         Exec(f'gray-scott {self.settings_json_path}',
              MpiExecInfo(nprocs=self.config['nprocs'],
                          ppn=self.config['ppn'],
-                         hostfile=self.jarvis.hostfile,
+                         hostfile=self.hostfile,
                          env=self.mod_env))
         end = time.time()
         diff = end - start

@@ -157,7 +157,7 @@ class Fio(Application):
         # pipe_stdout=self.config['log'] 
         Exec(' '.join(cmd),
              LocalExecInfo(env=self.mod_env,
-                         hostfile=self.jarvis.hostfile,
+                         hostfile=self.hostfile,
                          do_dbg=self.config['do_dbg'],
                          dbg_port=self.config['dbg_port']))
         

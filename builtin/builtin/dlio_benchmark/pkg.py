@@ -194,14 +194,14 @@ class DlioBenchmark(Application):
             # run the command to generate data
             Exec(' '.join(gen_cmd),
                 MpiExecInfo(env=self.mod_env,
-                            hostfile=self.jarvis.hostfile,
+                            hostfile=self.hostfile,
                             nprocs=self.config['nprocs'],
                             ppn=self.config['ppn']))
 
         # step2: clear the system cache
         Exec('sudo drop_caches',
              PsshExecInfo(env=self.env,
-                        hostfile=self.jarvis.hostfile))
+                        hostfile=self.hostfile))
         
         # step3: run the benchmark with the workload
         if self.config['tracing']:
@@ -239,7 +239,7 @@ class DlioBenchmark(Application):
         # run the benchmark command
         Exec(' '.join(run_cmd),
              MpiExecInfo(env=self.mod_env,
-                         hostfile=self.jarvis.hostfile,
+                         hostfile=self.hostfile,
                          nprocs=self.config['nprocs'],
                          ppn=self.config['ppn']))
         
@@ -263,13 +263,13 @@ class DlioBenchmark(Application):
         # clear data path
         Rm(self.config['data_path'] + '*',
            PsshExecInfo(env=self.env,
-                        hostfile=self.jarvis.hostfile))
+                        hostfile=self.hostfile))
 
         self.log(f'Removing dataset {self.config['data_path']}', Color.YELLOW)
 
         # clear checkpoint
         Rm(self.config['checkpoint_path'] + '*',
            PsshExecInfo(env=self.env,
-                        hostfile=self.jarvis.hostfile))
+                        hostfile=self.hostfile))
         
         self.log(f'Removing checkpoints {self.config['checkpoint_path']}', Color.YELLOW)

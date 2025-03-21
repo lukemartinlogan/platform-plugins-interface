@@ -192,6 +192,7 @@ class Pkg(ABC):
         stats: the statistics list
         """
         self.jarvis = JarvisManager.get_instance()
+        self.hostfile = self.jarvis.hostfile
         self.jutil = JutilManager.get_instance()
         self.pkg_type = to_snake_case(self.__class__.__name__)
         self.root = None
@@ -791,7 +792,7 @@ class SimplePkg(Pkg):
         :return:
         """
         Mkdir(self.private_dir,
-              PsshExecInfo(hostfile=self.jarvis.hostfile))
+              PsshExecInfo(hostfile=self.hostfile))
         menu = self.configure_menu()
         menu_keys = {m['name']: True for m in menu}
         args = []

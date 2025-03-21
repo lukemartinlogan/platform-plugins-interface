@@ -86,7 +86,7 @@ class Filebench(Application):
         self.log(cmd, color=Color.YELLOW)
         Exec(cmd,
              PsshExecInfo(env=self.mod_env,
-                          hostfile=self.jarvis.hostfile,
+                          hostfile=self.hostfile,
                           do_dbg=self.config['do_dbg'],
                           dbg_port=self.config['dbg_port']))
 
@@ -99,7 +99,7 @@ class Filebench(Application):
         """
         Kill('filebench',
              PsshExecInfo(env=self.env,
-                          hostfile=self.jarvis.hostfile))
+                          hostfile=self.hostfile))
 
     def clean(self):
         """
@@ -110,4 +110,4 @@ class Filebench(Application):
         """
         Rm(self.config['dir'] + '*',
            PsshExecInfo(env=self.env,
-                        hostfile=self.jarvis.hostfile))
+                        hostfile=self.hostfile))

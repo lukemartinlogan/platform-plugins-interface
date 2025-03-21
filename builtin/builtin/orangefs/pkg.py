@@ -84,9 +84,9 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
             self.config['sudoenv'] = False
 
         # Configure and save hosts
-        self.client_hosts = self.jarvis.hostfile
-        self.server_hosts = self.jarvis.hostfile
-        self.md_hosts = self.jarvis.hostfile
+        self.client_hosts = self.hostfile
+        self.server_hosts = self.hostfile
+        self.md_hosts = self.hostfile
         self.config['client_host_set'] = self.client_hosts.hosts
         self.config['server_host_set'] = self.server_hosts.hosts
         self.config['md_host_set'] = self.md_hosts.hosts
@@ -99,7 +99,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
         Pscp([self.config['client_hosts_path'],
               self.config['server_hosts_path'],
               self.config['metadata_hosts_path']],
-             PsshExecInfo(hosts=self.jarvis.hostfile, env=self.env))
+             PsshExecInfo(hosts=self.hostfile, env=self.env))
 
         # Locate storage hardware
         dev_df = []
@@ -154,7 +154,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
         pvfs_gen_cmd = " ".join(pvfs_gen_cmd)
         Exec(pvfs_gen_cmd, LocalExecInfo(env=self.env))
         Pscp(self.config['pfs_conf'],
-             PsshExecInfo(hosts=self.jarvis.hostfile, env=self.env))
+             PsshExecInfo(hosts=self.hostfile, env=self.env))
 
         # Create storage directories
         Mkdir(self.config['mount'], PsshExecInfo(hosts=self.client_hosts,
@@ -176,7 +176,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
                     mount_point=self.config['mount'],
                     client_pvfs2tab=self.config['pvfs2tab']))
         Pscp(self.config['pvfs2tab'],
-             PsshExecInfo(hosts=self.jarvis.hostfile,
+             PsshExecInfo(hosts=self.hostfile,
                           env=self.env))
         self.env['PVFS2TAB_FILE'] = self.config['pvfs2tab']
 

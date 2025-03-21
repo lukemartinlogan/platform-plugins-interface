@@ -64,7 +64,7 @@ class HermesUnitTests(Application):
         """
         nprocs = self.config['nprocs']
         if self.config['nprocs'] is None:
-            nprocs = len(self.jarvis.hostfile)
+            nprocs = len(self.hostfile)
         test_ipc_execs = ['TestIpc', 'TestAsyncIpc', 'TestIO', 'TestIpcMultithread4', 'TestIpcMultithread8']
         test_config_execs = [
             'TestHermesPaths'
@@ -87,7 +87,7 @@ class HermesUnitTests(Application):
         print(self.config['TEST_CASE'])
         if self.config['TEST_CASE'] in test_config_execs:
             Exec(f'test_config_exec {self.config["TEST_CASE"]}',
-                 LocalExecInfo(hostfile=self.jarvis.hostfile,
+                 LocalExecInfo(hostfile=self.hostfile,
                              nprocs=nprocs,
                              ppn=self.config['ppn'],
                              env=self.env,
@@ -95,7 +95,7 @@ class HermesUnitTests(Application):
                              dbg_port=self.config['dbg_port']))
         elif self.config['TEST_CASE'] in test_ipc_execs:
             Exec(f'test_ipc_exec {self.config["TEST_CASE"]}',
-                 MpiExecInfo(hostfile=self.jarvis.hostfile,
+                 MpiExecInfo(hostfile=self.hostfile,
                              nprocs=nprocs,
                              ppn=self.config['ppn'],
                              env=self.env,
@@ -106,7 +106,7 @@ class HermesUnitTests(Application):
             if self.config['TEST_CASE'] == 'hermes':
                 case = ''
             Exec(f'test_hermes_exec {case}',
-                 MpiExecInfo(hostfile=self.jarvis.hostfile,
+                 MpiExecInfo(hostfile=self.hostfile,
                              nprocs=nprocs,
                              ppn=self.config['ppn'],
                              env=self.env,
