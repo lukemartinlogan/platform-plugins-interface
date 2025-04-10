@@ -27,6 +27,10 @@ ret = setuptools.setup(
         "Operating System :: OS Independent",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "Topic :: Application Configuration",
+    ],
+    install_requires=[
+        'pandas',
+        'pyyaml'
     ]
 )
 
