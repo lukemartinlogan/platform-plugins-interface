@@ -93,6 +93,14 @@ class HermesRun(Service):
                 'rank': 1,
             },
             {
+                'name': 'fabric',
+                'msg': 'The libfabric fabric to use (e.g., 192.168.0.0/16)',
+                'type': str,
+                'default': None,
+                'class': 'communication',
+                'rank': 1,
+            },
+            {
                 'name': 'threads',
                 'msg': 'the number of rpc threads to create',
                 'type': int,
@@ -275,9 +283,7 @@ class HermesRun(Service):
         ]
 
     def get_hostfile(self):
-        self.hostfile = self.jarvis.hostfile
-        if self.config['num_nodes'] > 0 and self.hostfile.path is not None:
-            self.hostfile = Hostfile(hostfile=self.hostfile_path)
+        self.hostfile = Hostfile(hostfile=self.hostfile_path)
 
     def _configure(self, **kwargs):
         """
@@ -290,11 +296,12 @@ class HermesRun(Service):
         """
         rg = self.jarvis.resource_graph
 
-        # Create hostfile
+        # Get node subset
         self.hostfile = self.jarvis.hostfile
-        if self.config['num_nodes'] > 0 and self.hostfile.path is not None:
-            self.hostfile = self.hostfile.subset(self.config['num_nodes'])
+        if self.config['num_nodes'] > 0:
+            self.hostfile = self.jarvis.hostfile.subset(self.config['num_nodes'])
             self.hostfile.save(self.hostfile_path)
+        
         self.env['HERMES_LOG_VERBOSITY'] = str(self.config['log_verbosity'])
         # Begin making hermes_run config
         hermes_server = {
@@ -394,26 +401,49 @@ class HermesRun(Service):
                                '4KB', '16KB', '64KB', '1MB']
             }
 
-        # Get network Info
-        net_info = rg.find_net_info(self.hostfile, strip_ips=True, local=len(self.hostfile) == 1, env=self.env)
+        # Get all network info 
+        net_info = rg.find_net_info(local=len(self.hostfile) == 1, env=self.env)
         provider = self.config['provider']
+        domain = self.config['domain']
+        fabric = self.config['fabric']
+        if provider is not None:
+            net_info = net_info[lambda x: x['provider'] == provider]
+        if domain is not None:
+            net_info = net_info[lambda x: x['domain'] == domain]
+        if fabric is not None:
+            net_info = net_info[lambda x: x['fabric'] == fabric]
+
+        # Get fastest providers
         if provider is None:
-            opts = net_info['provider'].unique().list()
-            order = ['sockets', 'tcp', 'udp', 'verbs', 'ib']
-            for opt in order:
-                if opt in opts:
-                    provider = opt
-                    break
-            if provider is None:
-                provider = opts[0]
+            providers = net_info['provider'].unique().list() 
+            bases = ['verbs', 'tcp', 'sockets']
+            suffixes = ['', ';ofi_rxm']
+            for base in bases:
+                for suffix in suffixes:
+                    provider = f'{base}{suffix}'
+                    if provider in providers:
+                        break
+
+        # Get first matching net info
         self.log(f'Provider: {provider}')
         net_info_save = net_info
-        net_info = net_info[lambda r: str(r['provider']) == provider,
-                            ['provider', 'domain']]
+        net_info = net_info[lambda r: str(r['provider']) == provider]
         if len(net_info) == 0:
             self.log(net_info_save)
-            raise Exception(f'Failed to find hermes_run provider {provider}')
+            self.log('Failed to find provider for the runtime', Color.RED)
+            exit(1)
         net_info = net_info.rows[0]
+
+        # Compile hostfile
+        compile = CompileHostfile(self.hostfile, 
+                        net_info['provider'],
+                        net_info['domain'],
+                        net_info['fabric'],
+                        self.hostfile_path,
+                        env=self.env)
+        self.hostfile = compile.hostfile
+
+        # Create network info config
         protocol = net_info['provider']
         domain = net_info['domain']
         hostfile_path = self.hostfile.path
