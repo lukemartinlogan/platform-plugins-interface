@@ -1,0 +1,37 @@
+[project]
+name = "platform-plugins-interface"
+description = "IOWarp Platform Plugins Interface"
+readme = "README.md"
+requires-python = ">=3.7"
+dynamic = ["version"]
+# license = {text = "BSD"}
+authors = [
+  {name = "H. Joe Lee", email = "hyoklee@hdfgroup.org"},
+]
+classifiers = [
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Topic :: Scientific/Engineering",
+  "Development Status :: 3 - Alpha",
+  "Topic :: Scientific/Engineering",
+]
+dependencies = [
+  "pyyaml",
+  "pandas",
+]
+
+[project.urls]
+Documentation = "https://iowarp.github.io/"
+issue-tracker = "https://github.com/iowarp/platform-plugins-interface/issues"
+source-code = "https://github.com/iowarp/platform-plugins-interface"
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+  "setuptools>=42",
+  "setuptools-scm>=7",
+]
+
+[tool.setuptools]
+packages = ["ppi"]
