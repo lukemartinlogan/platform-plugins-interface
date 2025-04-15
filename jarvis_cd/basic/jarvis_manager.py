@@ -18,7 +18,7 @@ from jarvis_util.shell.local_exec import LocalExecInfo
 from pathlib import Path
 import getpass
 import yaml
-import shutil
+import sys
 
 
 class JarvisManager:
@@ -150,8 +150,10 @@ class JarvisManager:
         try:
             self.hostfile = Hostfile(hostfile=self.jarvis_conf['HOSTFILE'])
         except Exception as e:
-            print(f'Failed to open hostfile {self.jarvis_conf["HOSTFILE"]}')
+            print(f"Failed to open hostfile {self.jarvis_conf['HOSTFILE']}")
             self.hostfile = Hostfile()
+            print(f"An error occurred: {e}")
+            print(f"Error arguments: {e.args}")
         return self
 
     def save(self):
@@ -245,9 +247,9 @@ class JarvisManager:
 
         :return: None
         """
-        print("fs:")
+        print('fs:')
         self.resource_graph.print_df(self.resource_graph.fs)
-        print("net:")
+        print('net:')
         self.resource_graph.print_df(self.resource_graph.net)
 
     def resource_graph_build(self, net_sleep):
@@ -315,7 +317,7 @@ class JarvisManager:
                     return
         if not os.path.exists(os.path.join(path, repo_name)):
             print('Error: repo must have a subdirectory with the same name')
-            exit(1)
+            sys.exit(1)
         self.repos.insert(0, {
             'path': path,
             'name': repo_name
@@ -404,11 +406,11 @@ class JarvisManager:
         """
         repo = self.get_repo(repo_name)
         if not os.path.exists(repo['path']):
-            print(f'Repo {repo["path"]} does not exist')
+            print(f"Repo {repo['path']} does not exist")
             return
         pkg_types = os.listdir(os.path.join(repo['path'], repo['name']))
         pkg_types.sort()
-        print(f'{repo["name"]}: {repo["path"]}')
+        print(f"{repo['name']}: {repo['path']}")
         for pkg_type in pkg_types:
             if not pkg_type.startswith('_'):
                 print(f'  {pkg_type}')
@@ -421,7 +423,7 @@ class JarvisManager:
         :return: A object of type "pkg_type"
         """
         for repo in self.repos:
-            cls = load_class(f'{repo["name"]}.{pkg_type}.pkg',
+            cls = load_class(f"{repo['name']}.{pkg_type}.pkg",
                              repo['path'],
                              to_camel_case(pkg_type))
             if cls is None:

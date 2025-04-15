@@ -14,7 +14,6 @@ from jarvis_util.util.argparse import ArgParse
 from jarvis_util.jutil_manager import JutilManager
 from jarvis_util.shell.filesystem import Mkdir, Rm
 from jarvis_util.shell.pssh_exec import PsshExecInfo
-from enum import Enum
 import yaml
 import inspect
 import pathlib
@@ -75,7 +74,7 @@ class PipelineIterator:
         ppl.set_config_env_vars()
         self.iter_out = os.path.expandvars(ppl.config['iterator']['output'])
         print(f'ITER OUT: {self.iter_out} '
-              f'(from: {ppl.config["iterator"]["output"]})')
+              f'(from: {ppl.config['iterator']['output']})')
         self.stats_path = f'{self.iter_out}/stats_dict.csv'
         self.stats = []
 
@@ -145,6 +144,8 @@ class PipelineIterator:
             pkg.save()
 
     def save_run(self, conf_dict):
+        if conf_dict:
+            print('WARNING: conf_dict is defined but not used.')
         stat_dict = {**self.linear_conf_dict}
         # Get the package-specific stats
         for pkg in self.ppl.sub_pkgs:
@@ -400,7 +401,7 @@ class Pkg(ABC):
             if isinstance(at_id, int):
                 off = at_id
             else:
-                for sub_pkg_type, sub_pkg_id in self.config['sub_pkgs']:
+                for sub_pkg_id in self.config['sub_pkgs']:
                     if sub_pkg_id == at_id:
                         break
                     off += 1
@@ -632,11 +633,11 @@ class Pkg(ABC):
             f'lib{lib_name}.so',
         ]
         for name in name_opts:
-            exec = Exec(f'cc -print-file-name={name}',
+            exe = Exec(f'cc -print-file-name={name}',
                         LocalExecInfo(env=self.env,
                                       hide_output=True,
                                       collect_output=True))
-            res = exec.stdout['localhost'].strip()
+            res = exe.stdout['localhost'].strip()
             if len(res) and res != name:
                 return res
         if env_vars is None:
@@ -817,7 +818,7 @@ class SimplePkg(Pkg):
             # If a pipeline existed before an update was made to this
             # pkg changing the parameter sets, this will ensure
             # that the config is updated with the new parameters.
-            for key, value in parser.kwargs.items():
+            for key in parser.kwargs.items():
                 if key not in self.config:
                     self.config[key] = parser.kwargs[key]
         # This will ensure the kwargs dict contains all
@@ -1134,6 +1135,8 @@ class Pipeline(Pkg):
         """
         Run the pipeline repeatedly with new configurations
         """
+        if resume:
+            self.log('[ITER] resume=True')
         self.iterator = PipelineIterator(self)
         conf_dict = self.iterator.begin()
         while conf_dict is not None:
@@ -1153,9 +1156,9 @@ class Pipeline(Pkg):
                 self.iterator.save_run(conf_dict)
                 self.clean(with_iter_out=False)
             conf_dict = self.iterator.next()
-        self.log(f'[ITER] Beginning analysis', Color.BRIGHT_BLUE)
+        self.log('[ITER] Beginning analysis', Color.BRIGHT_BLUE)
         self.iterator.analysis()
-        self.log(f'[ITER] Finished analysis', Color.BRIGHT_BLUE)
+        self.log('[ITER] Finished analysis', Color.BRIGHT_BLUE)
         self.log(f'[ITER] Stored results in: {self.iterator.stats_path}',
                  Color.BRIGHT_BLUE)
 
@@ -1341,7 +1344,7 @@ class PipelineIndex:
         for script in yamls:
             print(f'  |- {script}')
 
-        print(f'SUB INDEXES:')
+        print('SUB INDEXES:')
         for subrepo in dirs:
             print(f'  |- {subrepo}')
         return self
