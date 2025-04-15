@@ -817,7 +817,7 @@ class SimplePkg(Pkg):
             # If a pipeline existed before an update was made to this
             # pkg changing the parameter sets, this will ensure
             # that the config is updated with the new parameters.
-            for key in parser.kwargs:
+            for key, value in parser.kwargs.items():
                 if key not in self.config:
                     self.config[key] = parser.kwargs[key]
         # This will ensure the kwargs dict contains all
