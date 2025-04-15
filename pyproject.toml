@@ -1,5 +1,5 @@
 [project]
-name = "platform-plugins-interface"
+name = "jarvis_cd"
 description = "IOWarp Platform Plugins Interface"
 readme = "README.md"
 requires-python = ">=3.7"
@@ -34,4 +34,4 @@ requires = [
 ]
 
 [tool.setuptools]
-packages = ["ppi"]
+packages = ["jarvis_cd"]
