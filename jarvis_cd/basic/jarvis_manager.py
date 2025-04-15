@@ -54,7 +54,7 @@ class JarvisManager:
         # Path to local jarvis builtin package directory
         self.builtin_dir = os.path.join(self.local_config_dir, 'builtin')
         # Path to the global jarvis configuration
-        self.jarvis_conf_path = os.path.join(self.local_config_dir, 
+        self.jarvis_conf_path = os.path.join(self.local_config_dir,
                                              'jarvis_config.yaml')
         # Path to the global jarvis resource graph
         self.jarvis_repos_path = os.path.join(self.local_config_dir,
@@ -62,7 +62,7 @@ class JarvisManager:
         # The Jarvis configuration (per-user)
         self.jarvis_conf = None
         #  The path to the jarvis resource graph (global across users)
-        self.resource_graph_path = os.path.join(self.local_config_dir, 
+        self.resource_graph_path = os.path.join(self.local_config_dir,
                                                 'resource_graph.yaml')
         # The Jarvis resource graph (global across users)
         self.resource_graph = None
@@ -122,7 +122,8 @@ class JarvisManager:
         """
         if not os.path.exists(self.jarvis_conf_path):
             print('No configuration was found. Run jarvis init or bootstrap. '
-                  'If you are currently running those commands, please ignore this message.')
+                  'If you are currently running those commands, '
+                  'please ignore this message.')
             return
         self.jarvis_conf = {}
         # Read global jarvis conf
@@ -305,7 +306,8 @@ class JarvisManager:
         for repo in self.repos:
             if repo['name'] == repo_name:
                 if os.path.exists(repo['path']) and not force:
-                    print("Warning: repo already exists. Use --force to overwrite")
+                    print('Warning: repo already exists. '
+                          'Use --force to overwrite')
                     return
                 else:
                     repo['path'] = path

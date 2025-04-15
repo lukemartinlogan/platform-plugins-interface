@@ -11,6 +11,7 @@ class MyPkg(Service):
     """
     This class provides methods to launch the MyPkg service.
     """
+
     def _init(self):
         """
         Initialize paths
@@ -27,15 +28,15 @@ class MyPkg(Service):
         """
         return [
             {
-                'name': None,  # The name of the parameter
-                'msg': '',  # Describe this parameter
-                'type': str,  # What is the parameter type?
-                'default': None,  # What is the default value if not required?
+                "name": None,  # The name of the parameter
+                "msg": "",  # Describe this parameter
+                "type": str,  # What is the parameter type?
+                "default": None,  # What is the default value if not required?
                 # Does this parameter have specific valid inputs?
-                'choices': [],
+                "choices": [],
                 # When type is list, what do the entries of the list mean?
                 # A list of dicts just like this one.
-                'args': [],
+                "args": [],
             },
         ]
 
@@ -69,8 +70,8 @@ class MyPkg(Service):
 
     def kill(self):
         """
-        Forcibly a running application. E.g., OrangeFS will terminate the servers,
-        clients, and metadata services.
+        Forcibly a running application. E.g., OrangeFS will terminate the
+        servers, clients, and metadata services.
 
         :return: None
         """

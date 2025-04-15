@@ -74,7 +74,8 @@ class PipelineIterator:
         self.repeat = ppl.config['iterator']['repeat']
         ppl.set_config_env_vars()
         self.iter_out = os.path.expandvars(ppl.config['iterator']['output'])
-        print(f'ITER OUT: {self.iter_out} (from: {ppl.config["iterator"]["output"]})')
+        print(f'ITER OUT: {self.iter_out} '
+              f'(from: {ppl.config["iterator"]["output"]})')
         self.stats_path = f'{self.iter_out}/stats_dict.csv'
         self.stats = []
 
@@ -102,7 +103,8 @@ class PipelineIterator:
         self.cur_pos_diff = [1] * len(self.cur_pos)
         self.conf_dict = self.current()
         self.iter_count = 0
-        self.max_iter_count = math.prod([for_zip.zip_len for for_zip in self.fors])
+        self.max_iter_count = math.prod([for_zip.zip_len for for_zip
+                                         in self.fors])
         return self.conf_dict
 
     def current(self):
@@ -299,7 +301,8 @@ class Pkg(ABC):
         for sub_pkg_type, sub_pkg_id in self.config['sub_pkgs']:
             sub_pkg = self.jarvis.construct_pkg(sub_pkg_type)
             if sub_pkg is None:
-                self.log(f'Could not find pkg: {sub_pkg_type}. Skipping.', Color.RED)
+                self.log(f'Could not find pkg: {sub_pkg_type}. Skipping.',
+                         Color.RED)
                 continue
             sub_pkg.load(f'{self.global_id}.{sub_pkg_id}', self.root)
             self.sub_pkgs.append(sub_pkg)
@@ -1141,7 +1144,8 @@ class Pipeline(Pkg):
                     f'{self.iterator.iter_count}-{i}')
                 self.set_config_env_vars(cur_iter_tmp)
                 self.log(f'[ITER] Iteration'
-                         f'[(param) {self.iterator.iter_count + 1}/{self.iterator.max_iter_count}]'
+                         f'[(param) {self.iterator.iter_count + 1}/ \
+                         {self.iterator.max_iter_count}]'
                          f'[(rep) {i + 1}/{self.iterator.repeat}]: '
                          f'{self.iterator.linear_conf_dict}', Color.BRIGHT_BLUE)
                 self.iterator.config_pkgs(conf_dict)
@@ -1152,7 +1156,8 @@ class Pipeline(Pkg):
         self.log(f'[ITER] Beginning analysis', Color.BRIGHT_BLUE)
         self.iterator.analysis()
         self.log(f'[ITER] Finished analysis', Color.BRIGHT_BLUE)
-        self.log(f'[ITER] Stored results in: {self.iterator.stats_path}', Color.BRIGHT_BLUE)
+        self.log(f'[ITER] Stored results in: {self.iterator.stats_path}',
+                 Color.BRIGHT_BLUE)
 
     def run(self, kill=False):
         """
@@ -1183,7 +1188,8 @@ class Pipeline(Pkg):
         self.mod_env = self.env.copy()
         for pkg in self.sub_pkgs:
             if pkg.skip_run:
-                self.log(f'[RUN] (skipping) {pkg.pkg_id}: Start', color=Color.YELLOW)
+                self.log(f'[RUN] (skipping) {pkg.pkg_id}: Start',
+                         color=Color.YELLOW)
             else:
                 self.log(f'[RUN] {pkg.pkg_id}: Start', color=Color.GREEN)
 
@@ -1245,13 +1251,15 @@ class Pipeline(Pkg):
         """
         for pkg in reversed(self.sub_pkgs):
             if pkg.skip_run:
-                self.log(f'[RUN] (skipping) {pkg.pkg_id}: Cleaning', color=Color.YELLOW)
+                self.log(f'[RUN] (skipping) {pkg.pkg_id}: Cleaning',
+                         color=Color.YELLOW)
             else:
                 self.log(f'[RUN] {pkg.pkg_id}: Cleaning', color=Color.GREEN)
             if isinstance(pkg, Service):
                 pkg.update_env(self.env, self.mod_env)
                 pkg.clean()
-            self.log(f'[RUN] {pkg.pkg_id}: Finished cleaning', color=Color.GREEN)
+            self.log(f'[RUN] {pkg.pkg_id}: Finished cleaning',
+                     color=Color.GREEN)
         if with_iter_out and 'iterator' in self.config:
             self.iterator = PipelineIterator(self)
             Rm(self.iterator.iter_out)
@@ -1305,7 +1313,7 @@ class PipelineIndex:
             print(f'Could not find index {index_query} ({index_path})')
             return
         return index_path
-    
+
     def _find_ext(self, base_path):
         for ext in ['', '.yaml', '.yml']:
             path = f'{base_path}{ext}'
@@ -1345,7 +1353,7 @@ class PipelineIndex:
             output_path = os.getcwd()
         shutil.copy2(self.index_path, output_path)
         return self
-        
+
     def load_script(self):
         if self.index_path is None:
             return self

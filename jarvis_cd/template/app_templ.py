@@ -2,6 +2,7 @@
 This module provides classes and methods to launch the MyPkg application.
 MyPkg is ....
 """
+
 from jarvis_cd.basic.pkg import Application
 from jarvis_util import *
 
@@ -10,6 +11,7 @@ class MyPkg(Application):
     """
     This class provides methods to launch the MyPkg application.
     """
+
     def _init(self):
         """
         Initialize paths
@@ -26,15 +28,15 @@ class MyPkg(Application):
         """
         return [
             {
-                'name': None,  # The name of the parameter
-                'msg': '',  # Describe this parameter
-                'type': str,  # What is the parameter type?
-                'default': None,  # What is the default value if not required?
+                "name": None,  # The name of the parameter
+                "msg": "",  # Describe this parameter
+                "type": str,  # What is the parameter type?
+                "default": None,  # What is the default value if not required?
                 # Does this parameter have specific valid inputs?
-                'choices': [],
+                "choices": [],
                 # When type is list, what do the entries of the list mean?
                 # A list of dicts just like this one.
-                'args': [],
+                "args": [],
             },
         ]
 
@@ -68,8 +70,8 @@ class MyPkg(Application):
 
     def kill(self):
         """
-        Forcibly a running application. E.g., OrangeFS will terminate the servers,
-        clients, and metadata services.
+        Forcibly a running application. E.g., OrangeFS will terminate the
+        servers, clients, and metadata services.
 
         :return: None
         """
