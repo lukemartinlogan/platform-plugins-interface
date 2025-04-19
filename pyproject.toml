@@ -4,7 +4,6 @@ description = "IOWarp Platform Plugins Interface"
 readme = "README.md"
 requires-python = ">=3.7"
 dynamic = ["version"]
-# license = {text = "BSD"}
 authors = [
   {name = "H. Joe Lee", email = "hyoklee@hdfgroup.org"},
 ]
@@ -34,4 +33,5 @@ requires = [
 ]
 
 [tool.setuptools]
-packages = ["jarvis_cd"]
+packages = ["jarvis_cd", "jarvis_cd.basic"]
+include-package-data = true
