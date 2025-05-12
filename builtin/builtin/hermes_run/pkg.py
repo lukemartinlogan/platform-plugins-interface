@@ -234,7 +234,7 @@ class HermesRun(Service):
                 'name': 'log_verbosity',
                 'msg': 'Verbosity of the output, 0 for fatal, 1 for info',
                 'type': int,
-                'default': '1',
+                'default': 1,
             },
             {
                 'name': 'page_size',
