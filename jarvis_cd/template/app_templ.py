@@ -85,3 +85,13 @@ class MyPkg(Application):
         :return: None
         """
         pass
+
+    def _get_stat(self, stat_dict):
+        """
+        Get statistics from the application.
+
+        :param stat_dict: A dictionary of statistics.
+        :return: None
+        """
+        stat_dict[f'{self.pkg_id}.runtime'] = self.start_time
+        
