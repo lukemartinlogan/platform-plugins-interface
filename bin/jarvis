@@ -739,7 +739,7 @@ class JarvisArgs(ArgParse):
 
         # jarvis pipeline insert
         self.add_cmd('pipeline insert',
-                      msg='Prepend a pkg to a pipeline',
+                      msg='Insert a pkg to a pipeline',
                       keep_remainder=True)
         self.add_args([
             {
