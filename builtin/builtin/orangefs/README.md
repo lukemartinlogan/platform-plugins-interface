@@ -2,15 +2,21 @@ In this section we go over how to install and deploy OrangeFS.
 NOTE: if running in Ares, OrangeFS is already installed, so skip
 to section 5.3.
 
-# 5.1. Install Various Dependencies
+# Install Various Dependencies
 
-```
+```bash
 sudo apt update
 sudo apt install -y fuse
 sudo apt install gcc flex bison libssl-dev libdb-dev linux-headers-$(uname -r) perl make libldap2-dev libattr1-dev
 ```
 
-# 5.1. Install OrangeFS (Linux)
+For fuse
+```bash
+sudo apt -y install fuse
+spack install libfuse@2.9
+```
+
+# Install OrangeFS (Linux)
 
 OrangeFS is located [on this website](http://www.orangefs.org/?gclid=CjwKCAjwgqejBhBAEiwAuWHioDo2uu8wel6WhiFqoBDgXMiVXc7nrykeE3sf3mIfDFVEt0_7SwRN8RoCdRYQAvD_BwE)
 The official OrangeFS github is [here](https://github.com/waltligon/orangefs/releases/tag/v.2.9.8).
@@ -47,17 +53,34 @@ make install
 # 5.3. Creating a pipeline
 
 In Ares:
-```
+```bash
 module load orangefs
 jarvis pipeline create orangefs
 jarvis pipeline env build +ORANGEFS_PATH
-jarvis pipeline append orangefs mount=${HOME}/orangefs_client +ares
+jarvis pipeline append orangefs \
+mount=${HOME}/orangefs_client \
+ofs_data_dir=/mnt/nvme/$USER/ofs_data \
+ofs_mode=ares
+```
+
+In a machine with libfuse:
+```bash
+module load orangefs
+jarvis pipeline create orangefs
+jarvis pipeline env build +ORANGEFS_PATH
+jarvis pipeline append orangefs \
+mount=${HOME}/orangefs_client \
+ofs_data_dir=/mnt/nvme/$USER/ofs_data \
+ofs_mode=fuse
 ```
 
 In a machine where you have root access:
-```
+```bash
 module load orangefs
 jarvis pipeline create orangefs
 jarvis pipeline env build +ORANGEFS_PATH
-jarvis pipeline append orangefs mount=${HOME}/orangefs_client
+jarvis pipeline append orangefs \
+mount=${HOME}/orangefs_client \
+ofs_data_dir=/mnt/nvme/$USER/ofs_data \
+ofs_mode=kern
 ```

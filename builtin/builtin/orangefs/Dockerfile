@@ -15,15 +15,17 @@ RUN apt-get update && \
 ENV DEBIAN_FRONTEND=dialog
 
 # SCSPKG + lmod
-RUN echo 'if ! shopt -q login_shell; then
-    if [ -d /etc/profile.d ]; then
-        for i in /etc/profile.d/*.sh; do
-            if [ -r $i ]; then
-                . $i
-            fi
-        done
-    fi
-fi' >> /root/.bashrc
+RUN echo $'\n\
+if ! shopt -q login_shell; then\n\
+    if [ -d /etc/profile.d ]; then\n\
+        for i in /etc/profile.d/*.sh; do\n\
+            if [ -r $i ]; then\n\
+                . $i\n\
+            fi\n\
+        done\n\
+    fi\n\
+fi\n\
+' >> /root/.bashrc
 RUN . "${SPACK_DIR}/share/spack/setup-env.sh" && \
     spack load iowarp && \
     echo "module use $(scspkg module dir)" >> /root/.bashrc && \
@@ -33,7 +35,7 @@ RUN . "${SPACK_DIR}/share/spack/setup-env.sh" && \
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y automake bison flex \
     libdb-dev \
-    libsqlite3-dev libfuse-dev
+    libsqlite3-dev libfuse-dev fuse
 
 # Install OFS
 RUN . "${SPACK_DIR}/share/spack/setup-env.sh" && \
