@@ -29,7 +29,7 @@ class OrangefsFuse:
                     mount_point=self.config['mount'])
             ]
             Exec(start_client_cmds,
-                 SshExecInfo(hostfile=Hostfile(all_hosts=[client]),
+                 SshExecInfo(hostfile=client,
                              env=self.env))
 
     def fuse_stop(self):
