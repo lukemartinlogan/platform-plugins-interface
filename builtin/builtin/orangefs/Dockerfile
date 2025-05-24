@@ -1,0 +1,41 @@
+FROM iowarp/iowarp-deps:latest
+
+# Set non-interactive frontend to avoid prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Set timezone to avoid prompt during package installation
+ENV TZ=Etc/UTC
+
+# Update package lists
+RUN apt-get update && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Reset frontend
+ENV DEBIAN_FRONTEND=dialog
+
+# SCSPKG + lmod
+RUN echo 'if ! shopt -q login_shell; then\n  if [ -d /etc/profile.d ]; then\n    for i in /etc/profile.d/*.sh; do\n      if [ -r $i ]; then\n        . $i\n      fi\n    done\n  fi\nfi' >> /root/.bashrc
+RUN echo "module use $(scspkg module dir)" >> /root/.bashrc
+RUN scspkg init tcl
+
+# Install OFS dependencies
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y automake bison flex \
+    libdb-dev \
+    libsqlite3-dev libfuse-dev
+
+# Install OFS
+RUN scspkg create orangefs && \
+    cd $(scspkg pkg src orangefs) && \
+    wget https://github.com/waltligon/orangefs/releases/download/v.2.10.0/orangefs-2.10.0.tar.gz && \
+    tar -xvzf orangefs-2.10.0.tar.gz && \
+    cd orangefs && \
+    ./prepare && \
+    ./configure --prefix=$(scspkg pkg root orangefs) --enable-shared --enable-fuse && \
+    make -j8 && \
+    make install && \
+    scspkg env prepend orangefs ORANGEFS_PATH $(scspkg pkg root orangefs)
+
+# Install OFS with openmpi
+
