@@ -12,9 +12,10 @@ class OrangefsFuse:
                 f"pvfs2-server {self.config['pfs_conf']} -f -a {host}",
                 f"pvfs2-server {self.config['pfs_conf']} -a {host}"
             ]
-            Exec(server_start_cmds, hosts=host)
-        
-        self.Status()
+            Exec(server_start_cmds,
+                 SshExecInfo(hostfile=host,
+                             env=self.env))
+        self.status()
 
         # start pfs client
         # pvfs2_fuse = os.path.join(self.orangefs_root, "bin", "pvfs2fuse")
@@ -28,7 +29,9 @@ class OrangefsFuse:
                     ip=mdm_ip,
                     mount_point=self.config['mount'])
             ]
-            Exec(start_client_cmds, hosts=client)
+            Exec(start_client_cmds,
+                 SshExecInfo(hostfile=client,
+                             env=self.env))
 
     def fuse_stop(self):
         cmds = [
@@ -36,11 +39,13 @@ class OrangefsFuse:
             f"umount -f {self.config['mount']}",
             f"umount {self.config['mount']}"
         ]
-        Exec(cmds, hosts=self.client_hosts)
+        Exec(cmds, PsshExecInfo(hosts=self.client_hosts,
+                                env=self.env))
 
         Kill('.*pvfs2-client.*', PsshExecInfo(hosts=self.client_hosts,
                                         env=self.env))
         Kill('pvfs2-server',
              PsshExecInfo(hosts=self.server_hosts,
                           env=self.env))
-        Exec("pgrep -la pvfs2-server", hosts=self.client_hosts)
+        Exec("pgrep -la pvfs2-server", PsshExecInfo(hosts=self.client_hosts,
+                                env=self.env))
