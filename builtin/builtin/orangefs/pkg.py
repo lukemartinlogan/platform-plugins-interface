@@ -2,11 +2,12 @@ from jarvis_cd.basic.pkg import Service
 from jarvis_util import *
 from .custom_kern import OrangefsCustomKern
 from .ares import OrangefsAres
+from .fuse import OrangefsFuse
 import os
 import time
 
 
-class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
+class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
     def _init(self):
         """
         Initialize paths
@@ -21,8 +22,8 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
                 'default': 3334
             },
             {
-                'name': 'dev_type',
-                'msg': 'The device to spawn orangefs over',
+                'name': 'ofs_data_dir',
+                'msg': 'The mount point to place all OFS data. Must not be a shared system (e.g., another PFS).',
                 'type': str,
                 'default': None,
             },
@@ -64,10 +65,11 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
                 'default': True,
             },
             {
-                'name': 'ares',
+                'name': 'ofs_mode',
                 'msg': 'Whether we are using the orangefs on Ares',
                 'type': bool,
-                'default': False,
+                'choices': ['fuse', 'ares', 'kern']
+                'default': 'ares',
             },
         ]
 
@@ -80,7 +82,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
         :return: None
         """
         rg = self.jarvis.resource_graph
-        if self.config['ares']:
+        if self.config['ofs_mode'] != 'kern':
             self.config['sudoenv'] = False
 
         # Configure and save hosts
@@ -102,24 +104,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
              PsshExecInfo(hosts=self.jarvis.hostfile, env=self.env))
 
         # Locate storage hardware
-        dev_df = []
-        if self.config['dev_type'] is None:
-            dev_types = ['hdd', 'ssd', 'nvme', 'dimm']
-            for dev_type in dev_types:
-                dev_df = rg.find_storage(dev_types=[dev_type],
-                                         shared=False,
-                                         needs_root=False)
-                if len(dev_df) != 0:
-                    break
-            dev_df = rg.find_storage(shared=False,
-                                     needs_root=False)
-        else:
-            dev_df = rg.find_storage(dev_types=[self.config['dev_type']],
-                                     shared=False,
-                                     needs_root=False)
-        if len(dev_df) == 0:
-            raise Exception('Could not find any storage devices :(')
-        storage_dir = os.path.expandvars(dev_df.rows[0]['mount'])
+        storage_dir = self.config['ofs_data_dir']
 
         # Define paths
         self.config['pfs_conf'] = f'{self.private_dir}/orangefs.xml'
@@ -202,20 +187,23 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
         self.ofs_path = self.env['ORANGEFS_PATH']
 
     def start(self):
-        self._load_config()
-        # start pfs servers
-        self.custom_start()
+        self._load_config() 
+        if self.config['ofs_mode'] == 'fuse':
+            self.fuse_start()
+        else:
+            self.custom_start()
 
     def stop(self):
         self._load_config()
         if self.config['ares']:
             self.ares_stop()
+        elif self.config['fuse']:
+            self.fuse_stop()
         else:
             self.custom_stop()
 
     def clean(self):
         self._load_config()
-
         Rm([self.config['mount'], self.config['client_log']],
            PsshExecInfo(hosts=self.client_hosts,
                         env=self.env))

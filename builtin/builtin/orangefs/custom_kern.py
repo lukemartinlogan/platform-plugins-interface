@@ -55,15 +55,12 @@ class OrangefsCustomKern:
                           env=self.env,
                           sudo=True,
                           sudoenv=self.config['sudoenv']))
-        cmds = [
-            f'killall -9 pvfs2-client',
-            f'killall -9 pvfs2-client-core'
-        ]
-        Exec(cmds, PsshExecInfo(hosts=self.client_hosts,
+        Kill('.*pvfs2-client.*', PsshExecInfo(hosts=self.client_hosts,
                                 env=self.env))
-        Exec('killall -9 pvfs2-server',
+        Kill('pvfs2-server',
              PsshExecInfo(hosts=self.server_hosts,
                           env=self.env))
         Exec('pgrep -la pvfs2-server',
              PsshExecInfo(hosts=self.client_hosts,
                           env=self.env))
+        

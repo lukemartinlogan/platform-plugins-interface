@@ -15,9 +15,19 @@ RUN apt-get update && \
 ENV DEBIAN_FRONTEND=dialog
 
 # SCSPKG + lmod
-RUN echo 'if ! shopt -q login_shell; then\n  if [ -d /etc/profile.d ]; then\n    for i in /etc/profile.d/*.sh; do\n      if [ -r $i ]; then\n        . $i\n      fi\n    done\n  fi\nfi' >> /root/.bashrc
-RUN echo "module use $(scspkg module dir)" >> /root/.bashrc
-RUN scspkg init tcl
+RUN echo 'if ! shopt -q login_shell; then
+    if [ -d /etc/profile.d ]; then
+        for i in /etc/profile.d/*.sh; do
+            if [ -r $i ]; then
+                . $i
+            fi
+        done
+    fi
+fi' >> /root/.bashrc
+RUN . "${SPACK_DIR}/share/spack/setup-env.sh" && \
+    spack load iowarp && \
+    echo "module use $(scspkg module dir)" >> /root/.bashrc && \
+    scspkg init tcl
 
 # Install OFS dependencies
 RUN apt-get update && \
@@ -26,7 +36,9 @@ RUN apt-get update && \
     libsqlite3-dev libfuse-dev
 
 # Install OFS
-RUN scspkg create orangefs && \
+RUN . "${SPACK_DIR}/share/spack/setup-env.sh" && \
+    spack load iowarp && \
+    scspkg create orangefs && \
     cd $(scspkg pkg src orangefs) && \
     wget https://github.com/waltligon/orangefs/releases/download/v.2.10.0/orangefs-2.10.0.tar.gz && \
     tar -xvzf orangefs-2.10.0.tar.gz && \
