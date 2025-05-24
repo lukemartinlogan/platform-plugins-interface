@@ -16,6 +16,9 @@ sudo apt -y install fuse
 spack install libfuse@2.9
 ```
 
+NOTE: This package expects a working, passwordless SSH setup if you are using multiple nodes. On systems like Chameleon Cloud, you
+must distribute the keys and set this up yourself before using jarvis. On single-node systems, SSH is not required.
+
 # Install OrangeFS (Linux)
 
 OrangeFS is located [on this website](http://www.orangefs.org/?gclid=CjwKCAjwgqejBhBAEiwAuWHioDo2uu8wel6WhiFqoBDgXMiVXc7nrykeE3sf3mIfDFVEt0_7SwRN8RoCdRYQAvD_BwE)
@@ -64,6 +67,16 @@ you have multiple deployments
 ## Performance Parameters
 * ``stripe_size``: Size in bytes for stripes. Default 65536 (i.e., 64KB). 
 * ``protocol``: Either tcp or ib. Only tcp has been tested.
+
+## The Hostfile
+OrangeFS can be picky about the hostfile. We recommend using only IP addresses
+in your jarvis hostfile at this time when using OrangeFS.
+
+An example hostfile for a single-node deployment is below:
+```bash
+echo '127.0.0.1' > ~/hostfile.txt
+jarvis hostfile set ~/hostfile.txt
+```
 
 ## libfuse
 ```bash
