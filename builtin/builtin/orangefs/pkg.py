@@ -195,9 +195,9 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
 
     def stop(self):
         self._load_config()
-        if self.config['ares']:
+        if self.config['ofs_mode'] == 'ares':
             self.ares_stop()
-        elif self.config['fuse']:
+        elif self.config['ofs_mode'] == 'fuse':
             self.fuse_stop()
         else:
             self.custom_stop()
