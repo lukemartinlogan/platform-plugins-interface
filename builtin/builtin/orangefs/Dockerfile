@@ -37,9 +37,13 @@ RUN apt-get update && \
     libdb-dev \
     libsqlite3-dev libfuse-dev fuse
 
+# Install libfuse
+RUN . "${SPACK_DIR}/share/spack/setup-env.sh" && \
+    spack install libfuse@2.9
+
 # Install OFS
 RUN . "${SPACK_DIR}/share/spack/setup-env.sh" && \
-    spack load iowarp && \
+    spack load iowarp libfuse && \
     scspkg create orangefs && \
     cd $(scspkg pkg src orangefs) && \
     wget https://github.com/waltligon/orangefs/releases/download/v.2.10.0/orangefs-2.10.0.tar.gz && \

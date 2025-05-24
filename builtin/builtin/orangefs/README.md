@@ -34,7 +34,7 @@ make install
 scspkg env prepend orangefs ORANGEFS_PATH `scspkg pkg root orangefs`
 ```
 
-# 5.2. Using MPICH with OrangeFS
+# Using MPICH with OrangeFS
 
 MPICH requires a special build when using OrangeFS. Apparantly it's for
 performance, but it's a pain to have to go through the extra step.
@@ -50,20 +50,22 @@ make -j8
 make install
 ```
 
-# 5.3. Creating a pipeline
+# Creating a pipeline
 
-In Ares:
-```bash
-module load orangefs
-jarvis pipeline create orangefs
-jarvis pipeline env build +ORANGEFS_PATH
-jarvis pipeline append orangefs \
-mount=${HOME}/orangefs_client \
-ofs_data_dir=/mnt/nvme/$USER/ofs_data \
-ofs_mode=ares
-```
+## Main Parmaeters
+There are a few main parameters:
+* ``ofs_data_dir``: The place where orangefs should store data or metadata. 
+This needs to be a directory private to each node. For example, like /tmp or a burst buffer.
+* ``mount``: Where the client should be mounted. This is where users will typically place data.
+* ``ofs_mode``: The deployment method to use. Either fuse, kern, or ares.
+* ``name``: The semantic name of the OrangeFS deployment. Typically just leave as default unless 
+you have multiple deployments
 
-In a machine with libfuse:
+## Performance Parameters
+* ``stripe_size``: Size in bytes for stripes. Default 65536 (i.e., 64KB). 
+* ``protocol``: Either tcp or ib. Only tcp has been tested.
+
+## libfuse
 ```bash
 module load orangefs
 jarvis pipeline create orangefs
@@ -74,7 +76,7 @@ ofs_data_dir=${HOME}/ofs_data \
 ofs_mode=fuse
 ```
 
-In a machine where you have root access:
+## For kernel module
 ```bash
 module load orangefs
 jarvis pipeline create orangefs
@@ -83,4 +85,15 @@ jarvis pipeline append orangefs \
 mount=${HOME}/orangefs_client \
 ofs_data_dir=/mnt/nvme/$USER/ofs_data \
 ofs_mode=kern
+```
+
+## Ares Machine at IIT
+```bash
+module load orangefs
+jarvis pipeline create orangefs
+jarvis pipeline env build +ORANGEFS_PATH
+jarvis pipeline append orangefs \
+mount=${HOME}/orangefs_client \
+ofs_data_dir=/mnt/nvme/$USER/ofs_data \
+ofs_mode=ares
 ```
