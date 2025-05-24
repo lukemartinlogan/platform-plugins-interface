@@ -13,7 +13,7 @@ class OrangefsFuse:
                 f"pvfs2-server {self.config['pfs_conf']} -a {host}"
             ]
             Exec(server_start_cmds,
-                 SshExecInfo(hostfile=host,
+                 SshExecInfo(hostfile=Hostfile(all_hosts=[host]),
                              env=self.env))
         self.status()
 
@@ -30,7 +30,7 @@ class OrangefsFuse:
                     mount_point=self.config['mount'])
             ]
             Exec(start_client_cmds,
-                 SshExecInfo(hostfile=client,
+                 SshExecInfo(hostfile=Hostfile(all_hosts=[client]),
                              env=self.env))
 
     def fuse_stop(self):
