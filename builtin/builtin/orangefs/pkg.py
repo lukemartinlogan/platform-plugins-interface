@@ -102,6 +102,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
               self.config['server_hosts_path'],
               self.config['metadata_hosts_path']],
              PsshExecInfo(hosts=self.jarvis.hostfile, env=self.env))
+        self.log('Distributed client, server, and metadata hostfiles', Color.YELLOW)
 
         # Locate storage hardware
         storage_dir = self.config['ofs_data_dir']
@@ -142,6 +143,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
         Exec(pvfs_gen_cmd, LocalExecInfo(env=self.env))
         Pscp(self.config['pfs_conf'],
              PsshExecInfo(hosts=self.jarvis.hostfile, env=self.env))
+        self.log(f"Generated pvfs2 config: {self.config['pfs_conf']}", Color.YELLOW)
 
         # Create storage directories
         Mkdir(self.config['mount'], PsshExecInfo(hosts=self.client_hosts,
@@ -150,6 +152,8 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
                                                    env=self.env))
         Mkdir(self.config['metadata'], PsshExecInfo(hosts=self.md_hosts,
                                                     env=self.env))
+        self.log(f"Create mount, metadata and storage directories", Color.YELLOW)
+        self.log(f"Mount at: {self.config['mount']}", Color.YELLOW)
 
         # Set pvfstab on clients
         mdm_ip = self.md_hosts.list()[0].hosts[0]
@@ -166,14 +170,14 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
              PsshExecInfo(hosts=self.jarvis.hostfile,
                           env=self.env))
         self.env['PVFS2TAB_FILE'] = self.config['pvfs2tab']
+        self.log(f"Create PVFS2TAB_FILE: {self.config['pvfs2tab']}", Color.YELLOW)
 
         for host in self.server_hosts.list():
             host_ip = host.hosts[0]
             server_start_cmds = [
                 f'pvfs2-server -f -a {host_ip}  {self.config["pfs_conf"]}'
             ]
-            print(server_start_cmds)
-            print(f"PVFS2TAB: {self.env['PVFS2TAB_FILE']}")
+            self.log(server_start_cmds, Color.YELLOW)
             Exec(server_start_cmds,
                  SshExecInfo(hostfile=host,
                              env=self.env))

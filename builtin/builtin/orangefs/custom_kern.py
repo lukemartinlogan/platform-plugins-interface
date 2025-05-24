@@ -55,6 +55,7 @@ class OrangefsCustomKern:
                           env=self.env,
                           sudo=True,
                           sudoenv=self.config['sudoenv']))
+        self.log(f"Unmounting {self.config['mount']} on each client")
         Kill('.*pvfs2-client.*', PsshExecInfo(hosts=self.client_hosts,
                                 env=self.env))
         Kill('pvfs2-server',

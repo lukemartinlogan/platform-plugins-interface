@@ -70,7 +70,7 @@ jarvis pipeline create orangefs
 jarvis pipeline env build +ORANGEFS_PATH
 jarvis pipeline append orangefs \
 mount=${HOME}/orangefs_client \
-ofs_data_dir=/mnt/nvme/$USER/ofs_data \
+ofs_data_dir=${HOME}/ofs_data \
 ofs_mode=fuse
 ```
 

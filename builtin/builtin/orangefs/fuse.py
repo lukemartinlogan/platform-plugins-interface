@@ -5,11 +5,10 @@ import os
 
 class OrangefsFuse:
     def fuse_start(self):
-        # start pfs servers
+        # start pfs servers 
         for host in self.server_hosts:
-            # pvfs2_server = os.path.join(self.orangefs_root,"sbin","pvfs2-server")
             server_start_cmds = [
-                f"pvfs2-server {self.config['pfs_conf']} -f -a {host}",
+                # f"pvfs2-server {self.config['pfs_conf']} -f -a {host}",
                 f"pvfs2-server {self.config['pfs_conf']} -a {host}"
             ]
             Exec(server_start_cmds,
@@ -22,10 +21,11 @@ class OrangefsFuse:
         for i,client in self.client_hosts.enumerate():
             mdm_ip = md_list[i % len(self.md_hosts)].hosts_ip[0]
             start_client_cmds = [
-                "pvfs2fuse -o fs_spec={protocol}://{ip}:{port}/pfs {mount_point}".format(
+                "pvfs2fuse -o fs_spec={protocol}://{ip}:{port}/{name} {mount_point}".format(
                     protocol=self.config['protocol'],
                     port=self.config['port'],
                     ip=mdm_ip,
+                    name=self.config['name'],
                     mount_point=self.config['mount'])
             ]
             Exec(start_client_cmds,
@@ -34,12 +34,11 @@ class OrangefsFuse:
 
     def fuse_stop(self):
         cmds = [
-            f"umount -l {self.config['mount']}",
-            f"umount -f {self.config['mount']}",
-            f"umount {self.config['mount']}"
+            f"fusermount -u {self.config['mount']}"
         ]
         Exec(cmds, PsshExecInfo(hosts=self.client_hosts,
                                 env=self.env))
+        self.log(f"Unmounting {self.config['mount']} on each client")
 
         Kill('.*pvfs2-client.*', PsshExecInfo(hosts=self.client_hosts,
                                         env=self.env))
