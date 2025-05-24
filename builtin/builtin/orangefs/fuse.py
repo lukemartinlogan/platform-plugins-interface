@@ -9,8 +9,8 @@ class OrangefsFuse:
         for host in self.server_hosts:
             # pvfs2_server = os.path.join(self.orangefs_root,"sbin","pvfs2-server")
             server_start_cmds = [
-                f"pvfs2-server {self.pfs_conf} -f -a {host}",
-                f"pvfs2-server {self.pfs_conf} -a {host}"
+                f"pvfs2-server {self.config['pfs_conf']} -f -a {host}",
+                f"pvfs2-server {self.config['pfs_conf']} -a {host}"
             ]
             Exec(server_start_cmds, hosts=host)
         
