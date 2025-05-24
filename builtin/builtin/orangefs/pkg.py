@@ -68,7 +68,7 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
                 'name': 'ofs_mode',
                 'msg': 'Whether we are using the orangefs on Ares',
                 'type': bool,
-                'choices': ['fuse', 'ares', 'kern']
+                'choices': ['fuse', 'ares', 'kern'],
                 'default': 'ares',
             },
         ]
