@@ -111,6 +111,8 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres):
                                          needs_root=False)
                 if len(dev_df) != 0:
                     break
+            dev_df = rg.find_storage(shared=False,
+                                     needs_root=False)
         else:
             dev_df = rg.find_storage(dev_types=[self.config['dev_type']],
                                      shared=False,
