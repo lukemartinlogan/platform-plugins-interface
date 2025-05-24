@@ -18,13 +18,11 @@ class OrangefsFuse:
         self.status()
 
         # start pfs client
-        # pvfs2_fuse = os.path.join(self.orangefs_root, "bin", "pvfs2fuse")
         md_list = self.md_hosts.list()
         for i,client in self.client_hosts.enumerate():
             mdm_ip = md_list[i % len(self.md_hosts)].hosts_ip[0]
             start_client_cmds = [
                 "pvfs2fuse -o fs_spec={protocol}://{ip}:{port}/pfs {mount_point}".format(
-                    pvfs2_fuse=pvfs2_fuse,
                     protocol=self.config['protocol'],
                     port=self.config['port'],
                     ip=mdm_ip,
