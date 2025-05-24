@@ -3,7 +3,7 @@ from jarvis_util import *
 import os
 
 
-class OrangefsFuse(Service):
+class OrangefsFuse:
     def fuse_start(self):
         # start pfs servers
         for host in self.server_hosts:
