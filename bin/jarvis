@@ -389,6 +389,19 @@ class JarvisArgs(ArgParse):
             },
         ])
 
+        # jarvis pkg readme
+        self.add_cmd('pkg readme',
+                      msg='View the readme for a package')
+        self.add_args([
+            {
+                'name': 'pkg_type',
+                'msg': 'The type of pkg being added to the pipeline',
+                'required': True,
+                'pos': True,
+                'default': None
+            },
+        ])
+
         # jarvis pkg configure
         self.add_cmd('pkg configure',
                       msg="Configure a pkg in the pipeline",
@@ -548,6 +561,14 @@ class JarvisArgs(ArgParse):
                 'pos': True,
                 'required': False,
                 'default': None
+            },
+            {
+                'name': 'pkg',
+                'msg': 'Get the package directory',
+                'required': False,
+                'type': bool,
+                'pos': False,
+                'default': True
             },
             {
                 'name': 'config',
@@ -1408,14 +1429,15 @@ class JarvisArgs(ArgParse):
     def path(self):
         pipeline_id = self.kwargs['pipeline_id']
         pkg_id = self.kwargs['pkg_id']
+        pkg = self.kwargs['pkg']
         config = self.kwargs['config']
         shared = self.kwargs['shared']
         private = self.kwargs['private']
         pipeline = Pipeline().load(pipeline_id, with_config=False)
         if pkg_id is not None:
-            path = pipeline.get_pkg(pkg_id).get_path(config, shared, private)
+            path = pipeline.get_pkg(pkg_id).get_path(config, shared, private, pkg)
         else:
-            path = pipeline.get_path(config, shared, private)
+            path = pipeline.get_path(config, shared, private, pkg)
         print(path)
 
     def getcwd(self):
@@ -1554,6 +1576,15 @@ class JarvisArgs(ArgParse):
         args = PkgArgParse(args=[], menu=menu)
         args.binary_name = pkg_type
         args._print_help()
+
+    def pkg_readme(self):
+        pkg_type = self.kwargs['pkg_type']
+        pkg = self.jarvis.construct_pkg(pkg_type)
+        if not os.path.exists(f'{pkg.pkg_dir}/README.md'):
+            print('No README.md found')
+            return
+        with open(f'{pkg.pkg_dir}/README.md', 'r') as fp:
+            print(fp.read())
 
     def pkg_src(self):
         pkg_type = self.kwargs['pkg_type']
