@@ -20,7 +20,43 @@ class JarvisArgs(ArgParse):
         self.define_pipeline_opts()
         self.define_repo_opts()
         self.define_env_opts()
+        self.define_ssh_opts()
         self.jutil.debug_mpi_exec = False
+
+    def define_ssh_opts(self):
+        # jarvis ssh
+        self.add_menu('ssh',
+              msg='Tools to distribute ssh keys')
+
+        # jarvis ssh copy
+        self.add_cmd('ssh copy',
+              msg='Copy ssh keys to other machines')
+        self.add_args([
+            {
+                'name': 'key',
+                'msg': 'The ssh key to copy',
+                'required': True,
+                'pos': True
+            },
+            {
+                'name': 'host',
+                'msg': 'The host to copy the ssh key to',
+                'required': True,
+                'pos': True
+            },
+        ])
+
+        # jarvis ssh distribute
+        self.add_cmd('ssh distribute',
+              msg='Distribute ssh keys to other machines')
+        self.add_args([
+            {
+            'name': 'key',
+            'msg': 'The ssh key to distribute',
+            'required': True,
+            'pos': True
+            }
+        ])
 
     def define_init_opts(self):
         # jarvis
@@ -1217,6 +1253,28 @@ class JarvisArgs(ArgParse):
             else:
                 print(f'{x} is neither yes or no')
         self.jarvis.reset()
+
+    """
+    SSH CLI
+    """
+    def ssh_copy(self):
+        key = self.kwargs['key']
+        host = self.kwargs['host'] 
+        hostfile = Hostfile(all_hosts=[host])
+        Pscp([key, key + '.pub'], exec_info=PsshExecInfo(hostfile=hostfile))
+        Chmod(key, 600, exec_info=PsshExecInfo(hostfile=hostfile))
+        Chmod(key + '.pub', 644, exec_info=PsshExecInfo(hostfile=hostfile))
+        ColorPrinter.print(f'Copied {key} and {key}.pub to all hosts:\n{hostfile}', Color.YELLOW)
+
+    def ssh_distribute(self):
+        key = self.kwargs['key']
+        with open(key, 'r') as fp:
+            key_str = fp.read()
+        hostfile = self.jarvis.hostfile
+        Pscp([key, key + '.pub'], exec_info=PsshExecInfo(hostfile=hostfile))
+        Chmod(key, 600, exec_info=PsshExecInfo(hostfile=hostfile))
+        Chmod(key + '.pub', 644, exec_info=PsshExecInfo(hostfile=hostfile))
+        ColorPrinter.print(f'Copied {key} and {key}.pub to all hosts:\n{hostfile}', Color.YELLOW)
 
     """
     RESOURCE GRAPH CLI
