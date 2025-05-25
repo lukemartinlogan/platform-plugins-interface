@@ -364,8 +364,6 @@ class Pkg(ABC):
             return self.private_dir
         if config:
             return self.config_dir
-        if pkg:
-            return self.pkg_dir
         raise Exception('Config, shared, and private were all false')
 
     def destroy(self):

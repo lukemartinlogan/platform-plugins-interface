@@ -563,14 +563,6 @@ class JarvisArgs(ArgParse):
                 'default': None
             },
             {
-                'name': 'pkg',
-                'msg': 'Get the package directory',
-                'required': False,
-                'type': bool,
-                'pos': False,
-                'default': True
-            },
-            {
                 'name': 'config',
                 'msg': 'Get the config directory path',
                 'required': False,
@@ -1429,15 +1421,14 @@ class JarvisArgs(ArgParse):
     def path(self):
         pipeline_id = self.kwargs['pipeline_id']
         pkg_id = self.kwargs['pkg_id']
-        pkg = self.kwargs['pkg']
         config = self.kwargs['config']
         shared = self.kwargs['shared']
         private = self.kwargs['private']
         pipeline = Pipeline().load(pipeline_id, with_config=False)
         if pkg_id is not None:
-            path = pipeline.get_pkg(pkg_id).get_path(config, shared, private, pkg)
+            path = pipeline.get_pkg(pkg_id).get_path(config, shared, private)
         else:
-            path = pipeline.get_path(config, shared, private, pkg)
+            path = pipeline.get_path(config, shared, private)
         print(path)
 
     def getcwd(self):
