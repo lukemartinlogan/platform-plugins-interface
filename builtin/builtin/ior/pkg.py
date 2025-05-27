@@ -51,6 +51,7 @@ class Ior(Application):
                 'msg': 'Amount of data to generate per-process',
                 'type': str,
                 'default': '32m',
+                'aliases': ['block_size']
             },
             {
                 'name': 'api',
@@ -88,6 +89,7 @@ class Ior(Application):
                 'msg': 'Path to the output file',
                 'type': str,
                 'default': '/tmp/ior.bin',
+                'aliases': ['output']
             },
             {
                 'name': 'log',
