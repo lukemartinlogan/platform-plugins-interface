@@ -192,7 +192,9 @@ class Orangefs(Service, OrangefsCustomKern, OrangefsAres, OrangefsFuse):
 
     def start(self):
         self._load_config() 
-        if self.config['ofs_mode'] == 'fuse':
+        if self.config['ofs_mode'] == 'ares':
+            self.ares_start()
+        elif self.config['ofs_mode'] == 'fuse':
             self.fuse_start()
         else:
             self.custom_start()
