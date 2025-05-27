@@ -14,7 +14,7 @@ class OrangefsCustomKern:
             print(server_start_cmds)
             print(f"PVFS2TAB: {self.env['PVFS2TAB_FILE']}")
             Exec(server_start_cmds,
-                 SshExecInfo(hostfile=Hostfile(all_hosts=[host]),
+                 SshExecInfo(hostfile=host,
                              env=self.env))
         self.status()
 
