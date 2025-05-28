@@ -1048,6 +1048,11 @@ class Pipeline(Pkg):
         self.config['iterator']['loop'] = config['loop']
         self.config['iterator']['output'] = config['output']
         self.config['iterator']['repeat'] = config['repeat']
+        if 'kill' in config:
+            self.config['iterator']['kill'] = config['kill']
+            self.kill = config['kill']
+        else:
+            self.kill = False
         if 'norerun' in config:
             self.config['iterator']['norerun'] = config['norerun']
         return self
@@ -1152,7 +1157,7 @@ class Pipeline(Pkg):
                          f'[(rep) {i + 1}/{self.iterator.repeat}]: '
                          f'{self.iterator.linear_conf_dict}', Color.BRIGHT_BLUE)
                 self.iterator.config_pkgs(conf_dict)
-                self.run(kill=True)
+                self.run(kill=self.kill)
                 self.iterator.save_run(conf_dict)
                 self.clean(with_iter_out=False)
             conf_dict = self.iterator.next()
