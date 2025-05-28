@@ -153,6 +153,8 @@ class PipelineIterator:
                 pkg._get_stat(stat_dict)
         # Save the stats to the list
         self.stats.append(stat_dict)
+        df = pd.DataFrame(self.stats)
+        df.to_csv(self.stats_path, index=False)
 
     def analysis(self):
         for pkg in self.ppl.sub_pkgs:
