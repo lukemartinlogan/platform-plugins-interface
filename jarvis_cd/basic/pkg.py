@@ -1146,6 +1146,8 @@ class Pipeline(Pkg):
             self.log('[ITER] resume=True')
         self.iterator = PipelineIterator(self)
         conf_dict = self.iterator.begin()
+        self.log(f'[ITER] Will store results in: {self.iterator.stats_path}',
+                 Color.BRIGHT_BLUE)
         while conf_dict is not None:
             self.clean(with_iter_out=False)
             for i in range(self.iterator.repeat):
