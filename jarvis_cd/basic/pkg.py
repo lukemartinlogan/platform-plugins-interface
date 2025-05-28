@@ -1050,9 +1050,8 @@ class Pipeline(Pkg):
         self.config['iterator']['repeat'] = config['repeat']
         if 'kill' in config:
             self.config['iterator']['kill'] = config['kill']
-            self.kill = config['kill']
         else:
-            self.kill = False
+            self.config['iterator']['kill'] = False
         if 'norerun' in config:
             self.config['iterator']['norerun'] = config['norerun']
         return self
@@ -1140,6 +1139,7 @@ class Pipeline(Pkg):
         """
         Run the pipeline repeatedly with new configurations
         """
+        self.kill = self.config['iterator']['kill']
         if resume:
             self.log('[ITER] resume=True')
         self.iterator = PipelineIterator(self)
